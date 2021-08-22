@@ -8,6 +8,8 @@
  */
 
 import { extend, isObject } from "@vue/shared";
+import { track } from "./effect";
+import { TrackOpTypes } from "./operators";
 import { reactive, readonly } from "./reactive";
 
 /**
@@ -27,7 +29,8 @@ function createGetter(isReadonly = false, shallow = false) {
     const res = Reflect.get(target, key, receiver); // Reflect的这个用法的意义其实等价于 target[key]
 
     if (!isReadonly) { // 如果要代理的对象是非只读的 收集依赖 数据变化后更新对应的视图
-
+      console.log('执行effect时会取值', '收集effect');
+      track(target,TrackOpTypes.GET, key);
     }
 
     if (shallow) { // 如果要代理的对象是非深度的 直接返回对应的浅层的值即可
