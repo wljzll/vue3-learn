@@ -1,36 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="app"></div>
     <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script>
+    <!-- <script src="../node_modules//vue/dist/vue.global.js"></script> -->
+
     <script>
-        let {
-            effect,
-            reactive
-        } = VueReactivity;
-        let state = reactive({
-            name: 'zf',
-            age: 12,
-            other: 'xxx'
-        });
+      let { effect, reactive } = VueReactivity;
+      //   let state = reactive({
+      //       name: 'zf',
+      //       age: 12,
+      //       other: 'xxx'
+      //   });
+      let state = reactive(["zf", 12]);
 
-        effect(() => {
-            app.innerHTML = '珠峰今年' + state.name + ',' + state.age
-        })
+      effect(
+        () => {
+          console.log("执行力effect");
+          app.innerHTML = "珠峰今年" + state[0] + "," + state[1];
+        },
+        {
+          lazy: false,
+        }
+      );
+      state[0] = "123";
+      state[1] = 12;
+      //   setTimeout(() => {
+      //       // state[1] = 3;
+      //       state[2] = 3
+      //   }, 1000);
+    //   setTimeout(() => {
+    //     state[0] = "xxxx";
+    //     state[1] = 15;
+    //   }, 1000);
+    //     console.log(state);
+      //   console.log(state.name);
 
-        setTimeout(() => {
-            state.other = 'xxxx'
-            state.age = 15;
-        }, 1000);
+      //   try {
+      //     let state = {
+      //       name: "zf",
+      //       age: 12,
+      //     };
+      //     const handler = {
+      //       get: function (target, key, receiver) {
+      //         console.log("取值了", target);
+      //         return target[key];
+      //       },
+      //       set: function (target, key, value, receiver) {
+      //         console.log("设置值");
+      //         target[key] = value;
+      //       },
+      //     };
+      //     let proxy = new Proxy(state, handler);
+      //     console.log(proxy.name);
+      //     proxy.name = "zfkc";
+      //     proxy.age = "123";
+      //     console.log(proxy);
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      //   const handler = {
+      //     get: function (obj, prop) {
+      //         console.log('取值了');
+      //       return prop in obj ? obj[prop] : 37;
+      //     },
+      //   };
+
+      //   const p = new Proxy({}, handler);
+      //   p.a = 1;
+      //   p.b = undefined;
+
+      //   console.log(p.a, p.b); // 1, undefined
+      //   console.log("c" in p, p.c); // false, 37
     </script>
-</body>
-
+  </body>
 </html>
