@@ -23,7 +23,7 @@ import { reactive, readonly } from "./reactive";
  * @description 给Proxy创建get方法 拦截目标对象的获取功能 区分深度非深度 只读非只读
  * @param isReadonly 是否只读 true仅读
  * @param shallow 是否浅层 true 浅的非深度
- * @returns 返回一个get()函数
+ * @returns 返回一个get()函数 get函数返回的是对应的res
  */
 function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key, receiver) {
@@ -36,9 +36,11 @@ function createGetter(isReadonly = false, shallow = false) {
      */
     const res = Reflect.get(target, key, receiver); // Reflect的这个用法的意义其实等价于 target[key]
 
+    // 非只读的属性收集effect
     if (!isReadonly) {
       // 如果要代理的对象是非只读的 收集依赖 数据变化后更新对应的视图
-      console.log("执行effect时会取值", "收集effect");
+      console.log("获取属性收集effect", target, key, receiver);
+
       track(target, TrackOpTypes.GET, key);
     }
 
@@ -65,6 +67,8 @@ function createGetter(isReadonly = false, shallow = false) {
  */
 function createSetter(shallow = false) {
   return function set(target, key, value, receiver) {
+    console.log("修改属性", target, key, value, receiver);
+
     const oldValue = target[key];
 
     /**
@@ -74,16 +78,19 @@ function createSetter(shallow = false) {
      * 1：如果target是数组并且修改的key不是length，hadKey为true，说明是修改这个数组，hadKey为false，说明是新增数组项；
      * 2：如果target是Object或者数组(修改length属性)，hadKey为true,说明是修改属性值，hadKey为false，说明是新增属性；
      */
-    const hadKey = isArray(target) && isIntegerKey(key)
+    const hadKey =
+      isArray(target) && isIntegerKey(key)
         ? Number(key) < target.length
         : hasOwn(target, key);
 
     const result = Reflect.set(target, key, value, receiver);
 
-    if (!hadKey) { // hadKey为false,无论对于数组还是Object都是新增
+    if (!hadKey) {
+      // hadKey为false,无论对于数组还是Object都是新增
       // 新增属性
       trigger(target, TriggerOpTypes.ADD, key, value);
-    } else if (hasChanged(value, oldValue)) { // 对比 修改的新值和老值是否相同 同一个值不需要更新
+    } else if (hasChanged(value, oldValue)) {
+      // 对比 修改的新值和老值是否相同 同一个值不需要更新
       // 修改属性
       trigger(target, TriggerOpTypes.SET, key, value, oldValue);
     }
@@ -109,13 +116,13 @@ let readonlyObj = {
 // 深度reactive
 export const mutableHandlers = {
   get,
-  set: createSetter()
+  set: createSetter(),
 };
 
 // 非深度reactive
 export const shallowReactiveHandlers = {
   get: shallowGet,
-  set: createSetter()
+  set: createSetter(),
 };
 
 // 深度readonly

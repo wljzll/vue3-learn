@@ -9,8 +9,8 @@
 </head>
 
 <body>
-    <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
-    <script src="../node_modules/vue/dist/vue.global.js"></script>
+    <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script>
+    <!-- <script src="../node_modules/vue/dist/vue.global.js"></script> -->
 
     <script>
         let {
@@ -18,14 +18,15 @@
             shallowReactive,
             readonly,
             shallowReadonly
-        } = Vue;
+        } = VueReactivity;
 
-        // let state = reactive({
-        //     name: 'zf',
-        //     age: {
-        //         n: 12
-        //     }
-        // });
+        let state = reactive({
+            name: 'zf',
+            age: {
+                n: 12
+            },
+            arr: [1,2]
+        });
 
         // let state = shallowReactive({
         //     name: 'zf',
@@ -41,15 +42,16 @@
         //     }
         // });
 
-        let state = shallowReadonly({
-            name: 'zf',
-            age: {
-                n: 12
-            }
-        });
-
-        console.log(state);
-        console.log(state.age);
+        // let state = shallowReadonly({
+        //     name: 'zf',
+        //     age: {
+        //         n: 12
+        //     },
+        //     arr: [1,2]
+        // });
+        state.arr.push(3);
+        // console.log(state);
+        // console.log(state.age);
     </script>
 </body>
 

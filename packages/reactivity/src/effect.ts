@@ -73,8 +73,6 @@ export function track(target, type, key) {
     // 如果Set中没有收集过这个effect
     dep.add(activeEffect); // 将key对应的effect依赖收集到对应key的Set中
   }
-
-  console.log(targetMap);
 }
 
 // effect(() => {
@@ -105,7 +103,9 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     }
   };
 
-  if (key === "length" && isArray(target)) {
+  if (key === "length" && isArray(target)) { // 如果是数组并且修改的是length属性
+    console.log('修改的数组的length属性');
+    
     // ary.length = 10; 如果修改的是数组的length属性
     // 如果修改的是长度
     depsMap.forEach((dep, key) => {
@@ -116,6 +116,8 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
       }
     });
   } else {
+     console.log('修改的是Object的属性');
+     
     // 数组或者Object但不是修改length属性
     if (key !== void 0) {
       // 修改key

@@ -14,71 +14,86 @@
 
     <script>
       let { effect, reactive } = VueReactivity;
-      //   let state = reactive({
-      //       name: 'zf',
-      //       age: 12,
-      //       other: 'xxx'
-      //   });
-      let state = reactive(["zf", 12]);
 
-      effect(
-        () => {
-          console.log("执行力effect");
-          app.innerHTML = "珠峰今年" + state[0] + "," + state[1];
+      let state = reactive({
+        name: "zf",
+        age: {
+          n: 12,
         },
-        {
-          lazy: false,
-        }
-      );
-      state[0] = "123";
-      state[1] = 12;
+        arr: [1, 2],
+      });
+
+      effect(() => {
+        console.log("执行了");
+        app.innerHTML = "珠峰今年" + state.arr[1];
+      });
+
+      state.arr.pop();
+    //   console.log(state);
+
+
+    //  执行了 - 默认执行effect
+    //  获取属性收集effect {name: "zf", age: {…}, arr: Array(2)} arr Proxy {name: "zf", age: {…}, arr: Array(2)} - state.arr取值
+    //  获取属性收集effect (2) [1, 2] 1 Proxy {0: 1, 1: 2} - state.arr[1]取值
+    //  获取属性收集effect {name: "zf", age: {…}, arr: Array(2)} arr Proxy {name: "zf", age: {…}, arr: Array(2)} state.arr取值
+    //  获取属性收集effect (2) [1, 2] pop Proxy {0: 1, 1: 2} - state.arr.pop取值
+    //  获取属性收集effect (2) [1, 2] length Proxy {0: 1, 1: 2} - 应该是pop操作中有获取length的底层操作
+    //  获取属性收集effect (2) [1, 2] 1 Proxy {0: 1, 1: 2} - 这个应该也是pop操作中有底层操作
+    //  修改属性 (2) [1, empty] length 1 Proxy {0: 1} - 修改了length属性
+    //  修改的数组的length属性 - trigger中的输出
+    //  执行了 - 重新执行effect
+    //  获取属性收集effect {name: "zf", age: {…}, arr: Array(1)} arr Proxy {name: "zf", age: {…}, arr: Array(1)} - 对state.arr取值
+    //  获取属性收集effect [1] 1 Proxy {0: 1} - 对state.arr[1]取值
+
+
+      //   //   let state = reactive({
+      //   //       name: 'zf',
+      //   //       age: 12,
+      //   //       other: 'xxx'
+      //   //   });
+      //   let state = reactive({
+      //     name: "zf",
+      //     age: {
+      //       n: 12,
+      //     },
+      //     arr: [1, 2],
+      //   });
+
+      //   effect(
+      //     () => {
+
+      //       app.innerHTML = "珠峰今年" + state.arr
+      //     },
+      //     {
+      //       lazy: false,
+      //     }
+      //   );
+      //   state.push;
       //   setTimeout(() => {
       //       // state[1] = 3;
       //       state[2] = 3
       //   }, 1000);
-    //   setTimeout(() => {
-    //     state[0] = "xxxx";
-    //     state[1] = 15;
-    //   }, 1000);
-    //     console.log(state);
+      //   setTimeout(() => {
+      //     state[0] = "xxxx";
+      //     state[1] = 15;
+      //   }, 1000);
+      //     console.log(state);
       //   console.log(state.name);
 
-      //   try {
-      //     let state = {
-      //       name: "zf",
-      //       age: 12,
-      //     };
-      //     const handler = {
-      //       get: function (target, key, receiver) {
-      //         console.log("取值了", target);
-      //         return target[key];
-      //       },
-      //       set: function (target, key, value, receiver) {
-      //         console.log("设置值");
-      //         target[key] = value;
-      //       },
-      //     };
-      //     let proxy = new Proxy(state, handler);
-      //     console.log(proxy.name);
-      //     proxy.name = "zfkc";
-      //     proxy.age = "123";
-      //     console.log(proxy);
-      //   } catch (error) {
-      //     console.log(error);
-      //   }
+      //   let state = ['珠峰', '培训'];
       //   const handler = {
-      //     get: function (obj, prop) {
-      //         console.log('取值了');
-      //       return prop in obj ? obj[prop] : 37;
+      //     get: function (target, key, receiver) {
+      //       console.log("取值了", target, key);
+      //       return target[key];
+      //     },
+      //     set: function (target, key, value, receiver) {
+      //       console.log("设置值", target, key, value, receiver);
+      //       const result = Reflect.set(target, key, value, receiver);
+      //       return  result
       //     },
       //   };
-
-      //   const p = new Proxy({}, handler);
-      //   p.a = 1;
-      //   p.b = undefined;
-
-      //   console.log(p.a, p.b); // 1, undefined
-      //   console.log("c" in p, p.c); // false, 37
+      //   let proxy = new Proxy(state, handler);
+      //  proxy.push('十年')
     </script>
   </body>
 </html>
