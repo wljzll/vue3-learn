@@ -9,8 +9,8 @@
 
   <body>
     <div id="app"></div>
-    <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script>
-    <!-- <script src="../node_modules//vue/dist/vue.global.js"></script> -->
+    <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+    <!-- <script src="../node_modules/vue/dist/vue.global.js"></script> -->
 
     <script>
       let { effect, reactive } = VueReactivity;
@@ -25,10 +25,10 @@
 
       effect(() => {
         console.log("执行了");
-        app.innerHTML = "珠峰今年" + state.arr[1];
+        app.innerHTML = "珠峰今年" + state.arr;
       });
 
-      state.arr.pop();
+      state.arr.pop()
     //   console.log(state);
 
 

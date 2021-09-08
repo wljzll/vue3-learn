@@ -89,6 +89,7 @@ export function track(target, type, key) {
  * @returns
  */
 export function trigger(target, type, key?, newValue?, oldValue?) {
+  debugger;
   const depsMap = targetMap.get(target);
   if (!depsMap) {
     // 属性没有对应的effect
@@ -103,9 +104,10 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     }
   };
 
-  if (key === "length" && isArray(target)) { // 如果是数组并且修改的是length属性
-    console.log('修改的数组的length属性');
-    
+  if (key === "length" && isArray(target)) {
+    // 如果是数组并且修改的是length属性
+    console.log("修改的数组的length属性");
+
     // ary.length = 10; 如果修改的是数组的length属性
     // 如果修改的是长度
     depsMap.forEach((dep, key) => {
@@ -116,8 +118,8 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
       }
     });
   } else {
-     console.log('修改的是Object的属性');
-     
+    console.log("修改的是Object的属性");
+
     // 数组或者Object但不是修改length属性
     if (key !== void 0) {
       // 修改key
@@ -137,6 +139,24 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     }
   }
   effects.forEach((effect: any) => {
+    if (effect.options.scheduler) {
+      return effect.options.scheduler(effect); // 如果有自己提供的scheduler，则执行scheduler逻辑
+    }
     effect();
   });
 }
+console.log(targetMap, "targetMaptargetMaptargetMaptargetMap");
+
+/**
+ * 数组触发getter的情况：
+ * 1) 取索引时触发getter，会将索引当作key收集依赖
+ * 2) 取length时触发getter，会将length当作key收集依赖
+ * 3) 取值整个数组，会触发一系列的属性的取值，造成依赖的收集
+ *    Symbol(Symbol.toPrimitive)
+ *    {"valueOf" => Set(1)}
+ *    {"toString" => Set(1)}
+ *    {"join" => Set(1)}
+ *    {"length" => Set(1)}
+ *    {"0" => Set(1)}
+ *    {"1" => Set(1)}
+ */

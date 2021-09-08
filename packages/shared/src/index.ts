@@ -23,3 +23,9 @@ export const isIntegerKey = (key: unknown) =>
   key !== "NaN" &&
   key[0] !== "-" &&
   "" + parseInt(key, 10) === key;
+
+export const isFunction = (value) => typeof value === "function";
+
+// 校验是否是事件
+const onRE = /^on[^a-z]/;
+export const isOn = (key: string) => onRE.test(key);

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="parentElement">
+      <span id="childElement">foo bar</span>
+
+      <span id="lastSpan">lastSpan lastSpan</span>
+    </div>
+
+    <script>
+      // 创建要插入的节点
+    //   var newNode = document.createElement("span");
+    //   newNode.textContent = '新创建的span'
+
+    //   // 获得父节点的引用
+    //   var parentDiv = document.getElementById("childElement").parentNode;
+
+    //   //实验一：referenceNode 存在 --> 正确返回
+    //   var sp2 = document.getElementById("childElement");
+    //   parentDiv.insertBefore(newNode, sp2);
+    //   //实验一结束
+
+    //   //实验二：referenceNode 为 undefined
+    //   var sp2 = undefined; // Not exist a node of id "childElement"
+    //   parentDiv.insertBefore(newNode, sp2); //隐式转换到节点类型
+    //   //实验二结束
+
+    //   //实验三：referenceNode 为字符类型的 "undefined"
+    //   var sp2 = "undefined"; //不存在id为"childElement"的referenceNode
+    //   parentDiv.insertBefore(newNode, sp2); // Generate "Type Error: Invalid Argument"
+    //   //实验三结束
+
+
+    // 实现insertAfter()功能
+    //创建一个新的、普通的<span>元素
+        var sp1 = document.createElement("span");
+        sp1.textContent = '实现insertAfter'
+
+    //插入节点之前，要获得节点的引用
+    var sp2 = document.getElementById("childElement");
+    //获得父节点的引用
+    var parentDiv = sp2.parentNode;
+
+    // //在DOM中在sp2之前插入一个新元素
+    // parentDiv.insertBefore(sp1, sp2);
+
+    parentDiv.insertBefore(sp1, sp2.nextSibling);
+    </script>
+  </body>
+</html>

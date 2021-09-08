@@ -6,6 +6,10 @@
  * 也就是shallow情况下,只在取值时代理一层;
  * 非shallow情况下,在取值时会深层代理
  */
+/**
+ * reactive：深度reactive和shallow reactive
+ * readonly: 深度readonly和shallow readonly
+ */
 
 import {
   extend,
@@ -34,6 +38,8 @@ function createGetter(isReadonly = false, shallow = false) {
      * 2、以前target[key] = value 方式设置值可能会失败，但是并不会报异常，也没有返回值标识
      *    当时Reflect方法具备返回值
      */
+    console.log('获取属性');
+    
     const res = Reflect.get(target, key, receiver); // Reflect的这个用法的意义其实等价于 target[key]
 
     // 非只读的属性收集effect
@@ -44,7 +50,7 @@ function createGetter(isReadonly = false, shallow = false) {
       track(target, TrackOpTypes.GET, key);
     }
 
-    if (shallow) {
+    if (shallow) { // shallow的reactive和readonly都是在触发get时直接返回对应值
       // 如果要代理的对象是非深度的 直接返回对应的浅层的值即可
       return res;
     }
@@ -70,7 +76,6 @@ function createSetter(shallow = false) {
     console.log("修改属性", target, key, value, receiver);
 
     const oldValue = target[key];
-
     /**
      * 如果target是数组并且本次修改的key不是length;
      * 如果target不是数组，返回target中是否有这个key;
@@ -119,7 +124,7 @@ export const mutableHandlers = {
   set: createSetter(),
 };
 
-// 非深度reactive
+// 非深度reactive 创建一个响应式代理，它跟踪其自身 property 的响应性，但不执行嵌套对象的深层响应式转换 (暴露原始值)。
 export const shallowReactiveHandlers = {
   get: shallowGet,
   set: createSetter(),
@@ -133,7 +138,7 @@ export const readonlyHandlers = extend(
   readonlyObj
 );
 
-// 非深度readonly
+// 非深度readonly 创建一个 proxy，使其自身的 property 为只读，但不执行嵌套对象的深度只读转换 (暴露原始值)。
 export const shallowReadonlyHandlers = extend(
   {
     get: shallowReadonlyGet,
