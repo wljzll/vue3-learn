@@ -1,7 +1,6 @@
 export const patchEvent = (el, rawName, nextValue) => {
   const invokers = el._evi || (el._evi = {}); // 保存el上定义的事件
   const exisitingInvoker = invokers[rawName];
-
   if (nextValue && exisitingInvoker) {
     // 如果已绑定过这个事件 并且传入的新的处理函数存在
     exisitingInvoker.value = nextValue; // 更新事件处理函数上的value属性
@@ -12,6 +11,7 @@ export const patchEvent = (el, rawName, nextValue) => {
       // 处理函数存在说明没绑定过这个事件 新绑定事件
       // 生成事件的处理函数
       const invoker = (invokers[rawName] = createInvoker(nextValue));
+      el.addEventListener(rawName, invoker)
     } else if (exisitingInvoker) {
       // 已经绑定过 但是nextValue不存在 说明是解绑事件
       el.removeEventListener(rawName); // 移除事件
