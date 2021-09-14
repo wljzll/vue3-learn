@@ -1,5 +1,10 @@
 import { createVNode } from "./vnode";
 
+/**
+ * @description 返回createApp方法
+ * @param render render方法
+ * @returns app对象
+ */
 export function createAppApi(render) {
     return function createApp(rootComponent, rootProps) { // 告诉他哪个组件哪个属性来创建的应用
         const app = {
@@ -7,14 +12,9 @@ export function createAppApi(render) {
             _component: rootComponent,
             _container: null,
             mount(container) { // 挂载的目的地
-                // let vnode = {};
-                // render(vnode, container);
-                // 1. 根据组件创建虚拟节点
-                // 2. 将虚拟节点和容器获取到后调用render方法进行渲染
-
-                // 创建虚拟节点
+                // 1、创建虚拟节点
                 const vnode = createVNode(rootComponent, rootProps, null);
-                // 调用render
+                // 2、调用render
                 render(vnode, container);
                 app._container = container;
             }
@@ -22,3 +22,7 @@ export function createAppApi(render) {
         return app;
     }
 }
+
+// 1、app.mount() - 用户手动调用mount方法将组件渲染到container中
+// 2、createVNode - 根据用户传入的参数通过字面量的形式创建vnode
+// 3、render() - 调用render()方法将vnode和container传入 做渲染操作

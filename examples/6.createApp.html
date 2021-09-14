@@ -13,18 +13,24 @@
     <div id="app"></div>
     <script>
         let {
-            createApp
+            createApp,
+            h
         } = VueRuntimeDOM;
         let App = {
             // render() {
             //     console.log('render');
             // }
-            setup() {
+            setup(props, context) {
                 console.log('执行setup');
+                return (proxy) => {
+                    return h('div', {
+                        style: {
+                            color: 'red'
+                        }
+                    }, 'hello world')
+                }
             },
-            render(proxy) {
-                console.log(proxy);
-            }
+
         }
         let app = createApp(App, {
             name: 'zf',

@@ -1,9 +1,8 @@
-
-
-// h('div', {style: {color:red}}, children)
-
 import { isArray, isObject, isString, ShapeFlags } from "@vue/shared";
-
+export function isVnode(vnode) {
+  return vnode._v_isVnode
+}
+// h('div', {style: {color:red}}, children)
 /**
  * @description 创建虚拟节点
  * @param type 组件对象或者元素标签字符串
@@ -11,31 +10,32 @@ import { isArray, isObject, isString, ShapeFlags } from "@vue/shared";
  * @param children 儿子
  */
 export const createVNode = (type, props, children) => {
-    // 根据type来区分是组件还是普通元素
+  // 根据type来区分是组件还是普通元素
 
-    // 给虚拟节点加一个类型
-    const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : isObject(type) ? ShapeFlags.STATEFUL_COMPONENT : 0
-    const vnode = {
-        _v_isVnode: true, // 这是一个vnode
-        type,
-        props,
-        children,
-        component: null, // 存放组件对应的实例
-        key: props && props.key, // diff算法会用到key
-        shapeFlag // 能够判断出自己的类型和儿子的类型
-    }
-    normalizeChildren(vnode, children);   
-    return vnode;
+  // 给虚拟节点加一个类型
+  const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : isObject(type) ? ShapeFlags.STATEFUL_COMPONENT : 0
+  const vnode = {
+    _v_isVnode: true, // 这是一个vnode
+    type,
+    props,
+    children,
+    component: null, // 存放组件对应的实例
+    key: props && props.key, // diff算法会用到key
+    shapeFlag // 能够判断出自己的类型和儿子的类型
+  }
+  // 通过和儿子 & 运算 标识出当前虚拟节点的类型和其儿子的类型
+  normalizeChildren(vnode, children);
+  return vnode;
 }
 
 function normalizeChildren(vnode, children) {
   let type = 0;
-  if(children == null) {
+  if (children == null) {
 
-  } else if(isArray(children)) {
+  } else if (isArray(children)) {
     type = ShapeFlags.ARRAY_CHILDREN;
   } else {
-      type = ShapeFlags.TEXT_CHILDREN;
+    type = ShapeFlags.TEXT_CHILDREN;
   }
   vnode.shapeFlag |= type;
 }
