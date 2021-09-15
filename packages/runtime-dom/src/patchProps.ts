@@ -11,13 +11,14 @@ import { patchStyle } from "./modules/style";
  * @param prevValue 原来的值
  * @param nextValue 新值
  */
-export const patchProps = function (el, key, prevValue, nextValue) {
+export const patchProp = function (el, key, prevValue, nextValue) {
   switch (key) {
     case "class": // 更新class
       patchClass(el, prevValue);
       break;
     case "style": // 更新style
       patchStyle(el, prevValue, nextValue);
+      break;
     default:
       if (isOn(key)) {
         patchEvent(el, key, nextValue)

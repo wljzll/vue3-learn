@@ -1,6 +1,13 @@
 import { isArray, isObject } from "@vue/shared";
 import { createVNode, isVnode } from "./vnode";
 
+/**
+ * @description 对传入的参数判断之后 交给createVNode方法创建虚拟DOM
+ * @param type 元素标签
+ * @param propsOrChildren 属性或者子元素 
+ * @param children 子元素
+ * @returns 当前元素的虚拟DOM
+ */
 export function h(type, propsOrChildren, children) {
     const l = arguments.length; // 儿子节点要么是字符串 要么是数组
     if (l == 2) { // 类型+属性、类型+孩子
@@ -18,10 +25,19 @@ export function h(type, propsOrChildren, children) {
         if (l > 3) {
             children = Array.prototype.slice.call(arguments, 2)
         } else if (l === 3 && isVnode(children)) {
-            children[children]
+            children = children[children]
         }
 
         return createVNode(type, propsOrChildren, children)
     }
 
 }
+
+// 两个参数:
+// h('div',{style: {color:'red';}}) 第二个参数是属性
+// h('div', 'hello world') 第二个参数是儿子
+
+// 三个参数
+// h('div', {style:{color: 'red';}}, 'hello world')
+
+// 三个以上参数

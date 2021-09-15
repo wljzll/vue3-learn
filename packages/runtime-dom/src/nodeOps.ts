@@ -13,7 +13,7 @@ export const nodeOps = {
   // 创建元素
   createElement: (tag) => document.createElement(tag),
   // 创建文本
-  craeteText: (text) => document.createTextNode(text),
+  createText: (text) => document.createTextNode(text),
   // 给元素节点设置文本内容
   setElementText: (el, text) => {
     (el as HTMLElement).textContent = text;

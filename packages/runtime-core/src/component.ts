@@ -5,20 +5,20 @@ import { PublicInstanceProxyHandler } from "./componentPublicInstance";
 
 
 /**
- * @description 根据虚拟DOM创建组件实例
- * @param vnode 虚拟节点
+ * @description 根据组件的虚拟DOM创建组件实例
+ * @param vnode 组件的虚拟节点
  * @returns 组件实例
  */
 export function createComponentInstance(vnode) {
     // 通过字面量的方式组合创建组件实例
     const instance = {
-        vnode,
+        vnode, // 组件的vnode
         type: vnode.type,
-        props: {}, //
-        attrs: {},
-        slots: {},
-        ctx: {},
-        render: null,
+        props: {}, // 组件实例的属性
+        attrs: {}, // 组件实例的attrs
+        slots: {}, // 组件实例的插槽
+        ctx: {},   // 组件中setup函数传入的上下文
+        render: null, // 组件的render函数
         setupState: {}, // 如果setup返回一个对象 这个对象会作为setUpstate
         isMounted: false, // 标识这个组件是否挂载过
     }
@@ -27,7 +27,12 @@ export function createComponentInstance(vnode) {
     return instance;
 }
 
+/**
+ * @description
+ * @param instance 组件实例
+ */
 export function setupComponent(instance) {
+    // 从组件的vnode上解析出对应属性
     const { props, children } = instance.vnode;
 
     // 根据props 解析出props和attrs， 将其放到instance上
@@ -44,9 +49,9 @@ export function setupComponent(instance) {
 }
 
 function setupStatefulComponent(instance) {
-    // 代理 传递给render函数的参数
+    // 代理 传递给组件的render函数的参数
     instance.proxy = new Proxy(instance.ctx, PublicInstanceProxyHandler)
-    // 2.获取组件的类型 拿到组件的setup方法
+    // 获取组件对象
     let Component = instance.type;
     // 获取组件 可能存在的setup方法
     let { setup } = Component;
@@ -84,20 +89,21 @@ function handleSetupResult(instance, setupResult) {
  * @param instance 组件实例
  */
 function finishComponentSetup(instance) {
+    // 拿到组件对象
     let Component = instance.type;
-    if (!instance.render) {
+    if (!instance.render) { // 如果setup方法没有返回render函数
         // 对template模板进行编译产生 render 函数
         // instance.render = render; // 将生成的render函数放在实例上
-        if(Component.render && Component.template) {
+        if(!Component.render && Component.template) { // 如果组件对象上没有render函数 那就通过编译自己定义render函数
             // 编译模板 将结果赋予给Component.render
         }
-        instance.render = Component.render;
+        instance.render = Component.render; // 取组件对象上的render函数赋值给组件实例
     }
     // 对vue2.0的api做了兼容处理
 }
 
 /**
- * @description 创建组件的上下文
+ * @description 创建一个对象作为组件setup的第二个参数也就是上下文
  * @param instance 组件实例
  * @returns 提取实例上的一些属性和方法组成setup中的上下文
  */

@@ -4,7 +4,7 @@ const fs = require('fs');
 const execa = require('execa'); // 开启子进程进行打包，最终还是使用rollup进行打包
 
 // 拿到packages下的所有模块
-const target = 'runtime-core';
+const target = 'runtime-dom';
 // console.log(targets);
 
 // 对我们的目标进行依次打包 - 并行打包

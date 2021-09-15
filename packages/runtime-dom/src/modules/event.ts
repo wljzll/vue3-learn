@@ -10,12 +10,12 @@ export const patchEvent = (el, rawName, nextValue) => {
     if (nextValue) {
       // 处理函数存在说明没绑定过这个事件 新绑定事件
       // 生成事件的处理函数
-      const invoker = (invokers[rawName] = createInvoker(nextValue));
-      el.addEventListener(rawName, invoker)
+      const invoker = (invokers[name] = createInvoker(nextValue));
+      el.addEventListener(name, invoker)
     } else if (exisitingInvoker) {
       // 已经绑定过 但是nextValue不存在 说明是解绑事件
-      el.removeEventListener(rawName); // 移除事件
-      invokers[rawName] = undefined; // 清空缓存
+      el.removeEventListener(name); // 移除事件
+      invokers[name] = undefined; // 清空缓存
     }
   }
 };

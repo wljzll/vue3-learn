@@ -6,12 +6,18 @@ import { createVNode } from "./vnode";
  * @returns app对象
  */
 export function createAppApi(render) {
+    /**
+     * @description 创建app对象,app对象上声明我们用到的属性和方法,最重要的是mount()方法
+     * @param rootComponent 根组件
+     * @param rootProps 根组件的属性
+     * @returns app对象
+     */
     return function createApp(rootComponent, rootProps) { // 告诉他哪个组件哪个属性来创建的应用
         const app = {
             _props: rootProps,
             _component: rootComponent,
             _container: null,
-            mount(container) { // 挂载的目的地
+            mount(container) { // 用户会手动调用mount方法,将组件挂载到container上
                 // 1、创建虚拟节点
                 const vnode = createVNode(rootComponent, rootProps, null);
                 // 2、调用render

@@ -1,10 +1,10 @@
 import { createRenderer } from "@vue/runtime-core";
 import { extend } from "@vue/shared";
 import { nodeOps } from "./nodeOps";
-import { patchProps } from "./patchProps";
+import { patchProp } from "./patchProps";
 
 // 渲染时用到的所有方法
-const rendererOptions = extend({ nodeOps }, patchProps)
+const rendererOptions = extend({patchProp}, nodeOps)
 
 /**
  * @description 提供给用户的createApp方法

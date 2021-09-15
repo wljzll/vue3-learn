@@ -89,7 +89,6 @@ export function track(target, type, key) {
  * @returns
  */
 export function trigger(target, type, key?, newValue?, oldValue?) {
-  debugger;
   const depsMap = targetMap.get(target);
   if (!depsMap) {
     // 属性没有对应的effect

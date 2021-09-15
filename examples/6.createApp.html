@@ -14,20 +14,21 @@
     <script>
         let {
             createApp,
-            h
+            h, reactive
         } = VueRuntimeDOM;
         let App = {
             // render() {
             //     console.log('render');
             // }
             setup(props, context) {
-                console.log('执行setup');
+                let state = reactive({name: 'zf'})
+                let fn = function () {
+                    state.name = 'jw'
+                    state.name = 'zll'
+                    state.name = 'wlj'
+                }
                 return (proxy) => {
-                    return h('div', {
-                        style: {
-                            color: 'red'
-                        }
-                    }, 'hello world')
+                    return h('div', {onClick:fn}, state.name)
                 }
             },
 
