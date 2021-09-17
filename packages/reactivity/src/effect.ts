@@ -105,8 +105,6 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
 
   if (key === "length" && isArray(target)) {
     // 如果是数组并且修改的是length属性
-    console.log("修改的数组的length属性");
-
     // ary.length = 10; 如果修改的是数组的length属性
     // 如果修改的是长度
     depsMap.forEach((dep, key) => {
@@ -117,8 +115,6 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
       }
     });
   } else {
-    console.log("修改的是Object的属性");
-
     // 数组或者Object但不是修改length属性
     if (key !== void 0) {
       // 修改key
@@ -144,8 +140,8 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     effect();
   });
 }
-console.log(targetMap, "targetMaptargetMaptargetMaptargetMap");
 
+// 待解决疑问点：数组的收集和更新问题
 /**
  * 数组触发getter的情况：
  * 1) 取索引时触发getter，会将索引当作key收集依赖

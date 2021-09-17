@@ -38,15 +38,12 @@ function createGetter(isReadonly = false, shallow = false) {
      * 2、以前target[key] = value 方式设置值可能会失败，但是并不会报异常，也没有返回值标识
      *    当时Reflect方法具备返回值
      */
-    console.log('获取属性');
-    
+
     const res = Reflect.get(target, key, receiver); // Reflect的这个用法的意义其实等价于 target[key]
 
     // 非只读的属性收集effect
     if (!isReadonly) {
       // 如果要代理的对象是非只读的 收集依赖 数据变化后更新对应的视图
-      console.log("获取属性收集effect", target, key, receiver);
-
       track(target, TrackOpTypes.GET, key);
     }
 
@@ -73,8 +70,6 @@ function createGetter(isReadonly = false, shallow = false) {
  */
 function createSetter(shallow = false) {
   return function set(target, key, value, receiver) {
-    console.log("修改属性", target, key, value, receiver);
-
     const oldValue = target[key];
     /**
      * 如果target是数组并且本次修改的key不是length;
