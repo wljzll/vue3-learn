@@ -4,7 +4,7 @@ export const PublicInstanceProxyHandler = {
     get({ _: instance }, key) {
         // 取值时 要访问 setUpState props data
         const { setupState, props, data } = instance
-        if (key[0] = "$") {
+        if (key[0] == "$") {
             return; // 不能访问$开头的变量
         }
         if (hasOwn(setupState, key)) {

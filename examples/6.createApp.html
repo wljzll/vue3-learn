@@ -1,44 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <script src="../node_modules/@vue/runtime-dom/dist/runtime-dom.global.js"></script>
     <div id="app"></div>
     <script>
-        let {
-            createApp,
-            h, reactive
-        } = VueRuntimeDOM;
-        let App = {
-            // render() {
-            //     console.log('render');
-            // }
-            setup(props, context) {
-                let state = reactive({name: 'zf'})
-                let fn = function () {
-                    state.name = 'jw'
-                    state.name = 'zll'
-                    state.name = 'wlj'
-                }
-                return (proxy) => {
-                    return h('div', {onClick:fn}, state.name)                    
-                }
-            },
-
-        }
-        let app = createApp(App, {
-            name: 'zf',
-            age: 12
-        })
-        app.mount('#app')
+      let { createApp, h, reactive } = VueRuntimeDOM;
+      const App = {
+        setup() {
+          let state = reactive({ flag: true });
+          return {
+            state,
+          };
+        },
+        render: (r) => {
+            setTimeout(() => {
+                r.state.flag = false
+            }, 2000);
+        return r.state.flag ?
+            h('div',
+                [
+                    h('li', { key: 'A' }, 'A'),
+                    h('li', { key: 'B' }, 'B'),
+                    h('li', { key: 'C', style:{
+                        color: 'yellow'
+                    } }, 'C'),
+                    h('li', { key: 'D' }, 'D'),
+                    h('li', { key: 'E' }, 'E'),
+                    h('li', { key: 'Q' }, 'Q'),
+                    h('li', { key: 'F' }, 'F'),
+                    h('li', { key: 'G' }, 'G')
+                ]
+            ) :
+            h('div',
+                [
+                   
+                    h('li', { key: 'A' }, 'A'),
+                    h('li', { key: 'B' }, 'B'),
+                    h('li', { key: 'E' }, 'E'),
+                    h('li', { key: 'C', style:{
+                        color: 'blue'
+                    } }, 'C'),
+                    h('li', { key: 'D' }, 'D'),
+                    h('li', { key: 'H' }, 'H'),
+                    h('li', { key: 'F' }, 'F'),
+                    h('li', { key: 'G' }, 'G')
+                ]
+            )
+    }
+      };
+      createApp(App).mount("#app");
     </script>
-</body>
-
+  </body>
 </html>
