@@ -27,7 +27,7 @@ function createReactiveEffect(fn, options) {
       try {
         effectStack.push(effect);
         activeEffect = effect;
-        fn();
+        return fn();
       } finally {
         // 用户传入effect的fn()中的逻辑存在报错的可能 但我们无论如何都要弹出本次执行了的effect
         effectStack.pop();

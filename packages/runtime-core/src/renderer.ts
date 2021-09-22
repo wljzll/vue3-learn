@@ -204,21 +204,45 @@ export function createRenderer(rendererOptions) { // 告诉core 怎么渲染
           // 需要尽可能的复用 用新的元素做成一个映射表去老的里找, 一样的就复用 不一样的要不插入 要不删除
           let s1 = i;
           let s2 = i;
-          const keyToNewIndexMap = new Map();
-          for(let i = s2; i <= e2; i++) {
+          const keyToNewIndexMap = new Map(); // 新元素和其索引的映射 {"E" => 2, "C" => 3, "D" => 4, "H" => 5}
+          for(let i = s2; i <= e2; i++) { // s2和e2之间的部分就是新老子元素有差异的元素
               const childVNode = c2[i]
-              keyToNewIndexMap.set(childVNode.key, i)
+              keyToNewIndexMap.set(childVNode.key, i) // 将子元素的key 和 该元素在所有子元素中的索引组成map结构
           }
+
           
-          for(let i = s1; i <= e1; i++) {
+          const toBePatched = e2 - s2 + 1 // 统计要对比的新的子元素的个数
+          const newIndexToOldMapIndex = new Array(toBePatched).fill(0) // 按新的子元素的顺序排列的数组, 数组中每个新的子元素对应的老的子元素的索引 [0:E, 0:C, 0:D, 0:H] => [5:E, 3:C, 4:D, 0:H]
+          for(let i = s1; i <= e1; i++) { // 循环老的需要对比的子节点
               const oldVNode = c1[i];
-              let newIndex = keyToNewIndexMap.get(oldVNode.key)
-              if(newIndex === undefined) {
+              let newIndex = keyToNewIndexMap.get(oldVNode.key) // 从新子元素映射表中获取对应子元素索引
+              if(newIndex === undefined) { // 如果新的中没有这个老的子元素对应的索引,说明老的子元素是多余的 删除
                   unmount(oldVNode)
-              } else {
-                  patch(oldVNode, c2[newIndex], el)
+              } else { // 存在的话 对比更新属性 
+                  // 新的和旧的关系
+                  // newIndex - s2 : 减s2是因为newIndexToOldMapIndex的长度为4,减2是为了与数组对应, 得到的就是新子元素应该在 newIndexToOldMapIndex 的索引,和keyToNewIndexMap是对应的
+                  // i:是老的子元素的索引, 加1是为了防止i从0开始时,和默认的0冲突
+                  // 比如, 老的子元素第一个是C, 那么newIndex = 3, s2 = 2; newIndex - s2 = 1, C就是newIndexToOldMapIndex的第二项, i = 2,就是在老的子元素中的索引是2,为了避免0这种冲突, i + 1 = 3
+                  // 也就是C子元素在[新的][要对比的]子元素列表中 是第二个, 而且C对应的老的子元素的索引是2
+                  // [5, 3, 4, 0] 5就是e对应的老的子元素的索引是4,加1变成了5; 3就是c对应的老的子元素的索引是2,加1变成3; 4就是d对应的老的子元素的索引是3,加1变成了4; 0 就表示h是新增的
+                  newIndexToOldMapIndex[newIndex - s2] = i + 1 
+                  patch(oldVNode, c2[newIndex], el) // 对比更新属性 但是没有位置可能不对
               }
           }
+          
+          // 按照要比对的子元素的长度遍历
+          for(let i = toBePatched - 1; i >= 0; i--) {
+             const currentIndex = s2 + 1; // 四个子元素在c2中的索引
+             const child = c2[currentIndex] // 获取到h元素
+             let anchor = currentIndex + 1 < c2.length ? c2[currentIndex + 1].el : null // 找到当前元素的下一个子元素
+             if(newIndexToOldMapIndex[i] == 0) { // 为0说明是新增元素
+               patch(null, child, el, anchor)
+             } else { // 说明老元素中有 只要移动过去复用
+               hostInsert(child.el, el, anchor)
+             }
+          }
+         console.log(newIndexToOldMapIndex);
+         
         }
     }
 
