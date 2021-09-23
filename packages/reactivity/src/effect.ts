@@ -1,5 +1,9 @@
 import { isArray, isIntegerKey } from "@vue/shared";
 import { TriggerOpTypes } from "./operators";
+// effect的工作流程:
+
+
+
 
 export function effect(fn, options: any = {}) {
   const effect = createReactiveEffect(fn, options);
@@ -73,6 +77,8 @@ export function track(target, type, key) {
     // 如果Set中没有收集过这个effect
     dep.add(activeEffect); // 将key对应的effect依赖收集到对应key的Set中
   }
+
+  console.log(targetMap);
 }
 
 // effect(() => {
@@ -107,10 +113,12 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     // 如果是数组并且修改的是length属性
     // ary.length = 10; 如果修改的是数组的length属性
     // 如果修改的是长度
+    // 遍历数组对应的所有effect
     depsMap.forEach((dep, key) => {
       // key: 0,1......
       // 如果有长度的依赖要更新  如果依赖的key小于设置的长度也要更新
       if (key == "length" || key >= newValue) {
+        // 收集要执行的effect
         add(dep);
       }
     });
@@ -140,6 +148,7 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     effect();
   });
 }
+
 
 // 待解决疑问点：数组的收集和更新问题
 /**
