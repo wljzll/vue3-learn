@@ -6,7 +6,9 @@ let queue = [];
 export function queueJob(job) {
   // 收集未被收集的effect  
   if (!queue.includes(job)) {
+    // 收集effect
     queue.push(job);
+    // 创建微任务 批量执行effect
     queueFlush();
   }
 }

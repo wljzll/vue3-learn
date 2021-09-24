@@ -27,7 +27,7 @@ class ComputedRefImpl {
             this._value = this.effect();
             this._dirty = false;
         }
-        // 当有effect使用到这个computed的值时 也就是computed.value computed要收集这个effect
+        // 当有effect使用到这个computed的值时 也就是computed.value computed要收集这个effect 或者在页面中有使用到 渲染页面的effect就会被收集
         track(this, TrackOpTypes.GET, 'value');
         return this._value;
     }
@@ -53,3 +53,14 @@ export function computed(getterOrOptions) {
     return new ComputedRefImpl(getter, setter);
 
 }
+
+// computed执行逻辑:
+// 1. 用户调用computed(getterOrOptions) 
+// 2. 判断getterOrOptions是函数还是对象, 最后都处理成 getter和setter对象
+// 3. 返回 new ComputedRefImpl(getter, setter)
+
+// new ComputedRefImpl(getter, setter)执行逻辑:
+// 1. 创建一个effect(getter), 将getter作为回调函数传入, 并且不会默认执行
+// 2. 当对这个computed取值, 也就是对new ComputedRefImpl()这个实例取值时, 会执行创建的effect, 也就是执行getter(), getter()中会对响应式数据取值, 从而让响应式数据收集这个effect()
+//    当computed依赖的数据发生了变化, 会执行这个effect的scheduler, 重置 dirty标识;
+//    如果DOM中有用到computed, computed的get访问器被访问时会收集这个渲染effect, 并在scheduler中trigger这个effect, 从而触发页面更新

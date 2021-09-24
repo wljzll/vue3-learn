@@ -1,9 +1,5 @@
 import { isArray, isIntegerKey } from "@vue/shared";
 import { TriggerOpTypes } from "./operators";
-// effect的工作流程:
-
-
-
 
 export function effect(fn, options: any = {}) {
   const effect = createReactiveEffect(fn, options);
@@ -46,7 +42,17 @@ function createReactiveEffect(fn, options) {
   return effect;
 }
 
-const targetMap = new Map();
+
+// targetMap的结构描述
+// {a: 1, b: 2}
+// { // 这是一个map
+//   key: {a: 1, b: 2},
+//   value: { // 这个也是map
+//     a: [effect1, effect2] // 这个数组是set
+//     b: [effect1, effect2] // 这个数组是set
+//   }
+// }
+const targetMap = new Map(); // 将响应式对象当作键, 该对象的key和key对应的effect组成map作为值
 /**
  * @description 当用户在effect函数中取值时，收集当前的effect
  * @param target 目标对象
@@ -54,7 +60,7 @@ const targetMap = new Map();
  * @param key 本次取值的键
  * @returns
  */
-export function track(target, type, key) {
+export function track(target, type, key) { // 执行effect中传入的fn()时, fn()中如果存在对响应式数据的取值, 会触发track函数,收集当前active的effect
   if (activeEffect === undefined) {
     // 此属性不用收集依赖，因为没在effect中使用
     return;
@@ -164,3 +170,22 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
  *    {"0" => Set(1)}
  *    {"1" => Set(1)}
  */
+
+// 一. 开发者创建effect的工作流程:
+// 1. 调用提供给用户的effect()函数, 返回fn()执行结果
+// 2. 提供给用户的effect()函数内部会执行createReactiveEffect()函数,创建真正的effect(),每次更新也是重新执行这个effect()
+// 3. effect()在创建时就会默认执行一次, effect()中如果有对响应式数据的取值,会触发track()函数,收集当前正在执行的effect()
+// 4. 当响应式数据发生变化时,会触发trigger()函数,重新执行对应的effect()
+
+
+// 二. createReactiveEffect()的执行流程:
+// 1. 定义reactiveEffect()函数, 并保存到effect变量上
+// 2. 给effect()函数添加属性: id/_isEffect/row/options等
+// 3. 返回effect()函数
+
+// 三. reactiveEffect()执行流程:
+// 1. 判断这个effect()是否被创建过, 未被创建过才去创建
+// 2. 将当前effect() push进effectStack中
+// 3. 将当前effect()添加到activeEffect上, 标识当前的effect是正在活跃的effect
+// 4. 执行用户的传入的函数参数 fn() 并返回其返回值
+// 5. fn()执行完毕, 将当前effect从effectStack中弹出, activeEffect 赋值为 effectStack[effectStack.length -1]

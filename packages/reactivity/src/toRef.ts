@@ -27,3 +27,12 @@ export function toRefs(object) {
   }
   return ret;
 }
+
+// toRef的功能: 其实就是给reactive数据的某个属性上做个代理, 创建一个 ObjectRefImpl实例, 指向这个类的属性
+
+// toRef()执行流程:
+// 1. 调用toRef(object, key), 返回 new ObjectRefImpl(object, key)实例, 所有后面对这个实例的操作,都是对object的key的操作
+
+// new ObjectRefImpl(object, key)的工作流程:
+// 1. 代理实例的get value: 返回object[key]
+// 2. 代理实例的set value: 往object[key]上设置值
